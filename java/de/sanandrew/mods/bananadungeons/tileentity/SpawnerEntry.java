@@ -18,6 +18,8 @@ import java.util.List;
 
 public class SpawnerEntry
 {
+    private String entityName;
+
     private Pair<ItemStack, Float> helmet;
     private Pair<ItemStack, Float> chestplate;
     private Pair<ItemStack, Float> leggings;
@@ -26,12 +28,49 @@ public class SpawnerEntry
 
     private List<PotionEffect> potions = new ArrayList<>(0);
 
-    private SpawnerEntry() { }
+    private SpawnerEntry(String entityName) {
+        this.entityName = entityName;
+    }
+
+    public static SpawnerEntry newEntry(String entityName) {
+        return new SpawnerEntry(entityName);
+    }
+
+    public SpawnerEntry addHelmet(ItemStack item, float dropChance) {
+        this.helmet = Pair.with(item, dropChance);
+        return this;
+    }
+
+    public SpawnerEntry addChestplate(ItemStack item, float dropChance) {
+        this.chestplate = Pair.with(item, dropChance);
+        return this;
+    }
+
+    public SpawnerEntry addLeggings(ItemStack item, float dropChance) {
+        this.leggings = Pair.with(item, dropChance);
+        return this;
+    }
+
+    public SpawnerEntry addBoots(ItemStack item, float dropChance) {
+        this.boots = Pair.with(item, dropChance);
+        return this;
+    }
+
+    public SpawnerEntry addHeldItem(ItemStack item, float dropChance) {
+        this.weapon = Pair.with(item, dropChance);
+        return this;
+    }
+
+    public SpawnerEntry addPotionEffect(int id, int duration, int amplifier) {
+        this.potions.add(new PotionEffect(id, duration, amplifier));
+        return this;
+    }
 
     public void setupSpawner(TileEntityDungeonMobSpawner spawner) {
         NBTTagCompound entityNBT = new NBTTagCompound();
         NBTTagList equipment = new NBTTagList();
         NBTTagList dropChance = new NBTTagList();
+        NBTTagList potionEffects = new NBTTagList();
 
         writeItemToNbtList(this.weapon, equipment, dropChance);
         writeItemToNbtList(this.boots, equipment, dropChance);
@@ -43,10 +82,10 @@ public class SpawnerEntry
         entityNBT.setTag("DropChances", dropChance);
 
         for( PotionEffect effect : this.potions ) {
-
+            potionEffects.appendTag(effect.writeCustomPotionEffectToNBT(new NBTTagCompound()));
         }
 
-        spawner.getSpawnerLogic().setEntityNBT(entityNBT);
+        spawner.getSpawnerLogic().setEntityNBT(entityNBT, this.entityName);
     }
 
     private static void writeItemToNbtList(Pair<ItemStack, Float> item, NBTTagList equipment, NBTTagList dropChance) {
@@ -56,6 +95,7 @@ public class SpawnerEntry
             equipment.appendTag(nbt);
             dropChance.appendTag(new NBTTagFloat(item.getValue1()));
         } else {
+            equipment.appendTag(new NBTTagCompound());
             dropChance.appendTag(new NBTTagFloat(0.0F));
         }
     }

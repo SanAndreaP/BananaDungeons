@@ -129,7 +129,7 @@ public abstract class AMobSpawnerDungeonLogic
                                      this.getSpawnerY() + this.spawnYShift + 1, this.getSpawnerZ() + 1);
     }
 
-    public void setEntityNBT(NBTTagCompound nbt) {
-        this.setRandomEntity(new WeightedRandomMinecart(nbt));
+    public void setEntityNBT(NBTTagCompound nbt, String entityName) {
+        this.setRandomEntity(new WeightedRandomMinecart(nbt, entityName));
     }
 }

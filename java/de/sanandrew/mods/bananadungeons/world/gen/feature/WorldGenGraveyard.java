@@ -6,9 +6,12 @@
  *******************************************************************************************************************/
 package de.sanandrew.mods.bananadungeons.world.gen.feature;
 
+import de.sanandrew.mods.bananadungeons.tileentity.SpawnerEntry;
 import de.sanandrew.mods.bananadungeons.tileentity.TileEntityDungeonMobSpawner;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -21,7 +24,13 @@ public class WorldGenGraveyard
 {
     private static final ForgeDirection[] FACINGS = new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.EAST, ForgeDirection.SOUTH, ForgeDirection.WEST};
 
-    @Override
+    static SpawnerEntry zombie = SpawnerEntry.newEntry("Zombie").addHelmet(new ItemStack(Items.leather_helmet), 0.0F)
+                                                                .addHeldItem(new ItemStack(Items.iron_axe), 0.0F);
+    static SpawnerEntry skeletonBow = SpawnerEntry.newEntry("Skeleton").addHelmet(new ItemStack(Items.leather_helmet), 0.0F)
+                                                                       .addHeldItem(new ItemStack(Items.bow), 0.0F);
+    static SpawnerEntry skeletonSword = SpawnerEntry.newEntry("Skeleton").addHelmet(new ItemStack(Items.golden_helmet), 0.0F)
+                                                                         .addHeldItem(new ItemStack(Items.iron_sword), 0.0F);
+
     public boolean generate(World world, Random rand, int x, int y, int z) {
         ForgeDirection currFacing = FACINGS[rand.nextInt(FACINGS.length)];
         carveOutAndGroundWall(world, rand, x, y, z, currFacing);
@@ -98,8 +107,20 @@ public class WorldGenGraveyard
         world.setBlock(x, y - 1, z, Blocks.mob_spawner, 0, 3);
 
         TileEntityDungeonMobSpawner spawner = new TileEntityDungeonMobSpawner();
-        spawner.getSpawnerLogic().setEntityName("Zombie");
-        spawner.getSpawnerLogic().spawnYShift = 2;
+        spawner.getSpawnerLogic().spawnYShift = 3;
+        switch( rand.nextInt(10) ) {
+            case 1:
+            case 2:
+                skeletonSword.setupSpawner(spawner);
+                break;
+            case 3:
+            case 4:
+            case 5:
+                skeletonBow.setupSpawner(spawner);
+                break;
+            default:
+                zombie.setupSpawner(spawner);
+        }
         world.setTileEntity(x, y - 1, z, spawner);
     }
 
