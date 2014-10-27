@@ -128,4 +128,8 @@ public abstract class AMobSpawnerDungeonLogic
         return AxisAlignedBB.getBoundingBox(this.getSpawnerX(), this.getSpawnerY() + this.spawnYShift, this.getSpawnerZ(), this.getSpawnerX() + 1,
                                      this.getSpawnerY() + this.spawnYShift + 1, this.getSpawnerZ() + 1);
     }
+
+    public void setEntityNBT(NBTTagCompound nbt) {
+        this.setRandomEntity(new WeightedRandomMinecart(nbt));
+    }
 }
