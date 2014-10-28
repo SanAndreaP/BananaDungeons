@@ -26,7 +26,7 @@ public class WorldGenerator
                 WorldGenGraveyard.generate(world, random, chunkX, chunkZ);
             }
 
-            if( random.nextInt(8) == 0 ) {
+            if( random.nextInt(16) == 0 ) {
                 WorldGenBarn.generate(world, random, chunkX, chunkZ);
             }
         }

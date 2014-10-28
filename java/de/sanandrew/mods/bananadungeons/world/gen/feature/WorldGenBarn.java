@@ -35,12 +35,12 @@ public class WorldGenBarn
     }
 
     private static void carveOutAndGroundWall(World world, Random rand, int x, int y, int z, ForgeDirection facing) {
-        for( int i = -9; i <= 9; i++ ) {
-            for( int j = -3; j <= 3; j++ ) {
+        for( byte i = -9; i <= 9; i++ ) {
+            for( byte j = -3; j <= 3; j++ ) {
                 int offX = x + i * facing.offsetX + j * facing.offsetZ;
                 int offZ = z + j * facing.offsetX + i * facing.offsetZ;
                 // catrve out area
-                for( int k = 0; k <= 8; k++ ) {
+                for( byte k = 0; k <= 8; k++ ) {
                     world.setBlock(offX, y + k, offZ, Blocks.air, 0, 2);
                 }
 
@@ -48,28 +48,43 @@ public class WorldGenBarn
                 world.setBlock(offX, y, offZ, Blocks.planks, 0, 2);
                 world.setBlock(offX, y + 4, offZ, Blocks.planks, 0, 2);
 
-                if( !(i > -9 && i < 9 && j > -3 && j < 3) ) {
+                if( i == -9 || i == 9 || j == -3 || j == 3 ) {
                     world.setBlock(offX, y + 1, offZ, Blocks.cobblestone, 0, 2);
-                    world.setBlock(offX, y + 2, offZ, Blocks.planks, 0, 2);
-                    world.setBlock(offX, y + 3, offZ, Blocks.planks, 0, 2);
-                    world.setBlock(offX, y + 5, offZ, Blocks.planks, 0, 2);
-                    world.setBlock(offX, y + 6, offZ, Blocks.planks, 0, 2);
+
+                    if( (i == -9 || i == 9) && (j == -3 || j == 3) ) {
+                        for( int l = 2; l <= 6; l++ ) {
+                            world.setBlock(offX, y + l, offZ, Blocks.log, 0, 2);
+                        }
+                    } else {
+                        world.setBlock(offX, y + 2, offZ, Blocks.planks, 0, 2);
+                        world.setBlock(offX, y + 3, offZ, Blocks.planks, 0, 2);
+                        world.setBlock(offX, y + 5, offZ, Blocks.planks, 0, 2);
+                        world.setBlock(offX, y + 6, offZ, Blocks.planks, 0, 2);
+                    }
                 }
-//                    // place podzol in inner area
-//                    world.setBlock(offX, y, offZ, Blocks.dirt, 2, 2);
-//                } else {
-//                    // place wall around podzol
-//                    world.setBlock(offX, y, offZ, Blocks.stonebrick, rand.nextInt(2) + 1, 2);
-//                    world.setBlock(offX, y + 1, offZ, Blocks.stonebrick, rand.nextInt(2) + 1, 2);
-//                    world.setBlock(offX, y + 4, offZ, Blocks.stonebrick, rand.nextInt(2) + 1, 2);
-//                    if( (i == -9 || i == 9) && (j == -6 || j == 6) ) {
-//                        world.setBlock(offX, y + 2, offZ, Blocks.stonebrick, rand.nextInt(2) + 1, 2);
-//                        world.setBlock(offX, y + 3, offZ, Blocks.stonebrick, rand.nextInt(2) + 1, 2);
-//                    } else {
-//                        world.setBlock(offX, y + 2, offZ, Blocks.iron_bars, 0, 2);
-//                        world.setBlock(offX, y + 3, offZ, Blocks.iron_bars, 0, 2);
-//                    }
-//                }
+            }
+        }
+
+        int logMeta = facing == ForgeDirection.NORTH || facing == ForgeDirection.SOUTH ? 8 : 4;
+
+        for( byte i = 0; i <= 10; i++ ) {
+            for( byte j = 0; j <= 4; j++ ) {
+                byte offY = 6;
+                if( j == 3 || j == 2 ) {
+                    offY = 7;
+                } else if( j == 1 || j == 0 ) {
+                    offY = 8;
+                }
+
+                int offXPos = x + i * facing.offsetX + j * facing.offsetZ;
+                int offZPos = z + j * facing.offsetX + i * facing.offsetZ;
+                int offXNeg = x - i * facing.offsetX - j * facing.offsetZ;
+                int offZNeg = z - j * facing.offsetX - i * facing.offsetZ;
+
+                world.setBlock(offXPos, y + offY, offZPos, Blocks.log, logMeta, 2);
+                world.setBlock(offXNeg, y + offY, offZNeg, Blocks.log, logMeta, 2);
+                world.setBlock(offXPos, y + offY, offZNeg, Blocks.log, logMeta, 2);
+                world.setBlock(offXNeg, y + offY, offZPos, Blocks.log, logMeta, 2);
             }
         }
     }
@@ -90,7 +105,7 @@ public class WorldGenBarn
 //            return 0;
         }
 
-        for( int i = 196; i >= 48; i-- ) {
+        for( short i = 196; i >= 48; i-- ) {
             Block block = world.getBlock(x, i, z);
             if( block != null && block == genBiome.topBlock ) {
                 return i;
